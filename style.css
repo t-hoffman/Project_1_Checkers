@@ -30,7 +30,7 @@
     border-radius: 5px;
 }
 
-.white {
+.whiteSpace {
     background-color: white;
     width: 80px;
     height: 80px;
@@ -39,7 +39,7 @@
     align-items: center;
 }
 
-.black {
+.blackSpace {
     background-color: #efefef;
     width: 80px;
     height: 80px;
@@ -49,7 +49,8 @@
 }
 
 .checker.black {
-    background-color: #007be0;
+    /*background-color: dodgerblue;*/
+    background-color: black;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -57,7 +58,9 @@
 }
 
 .checker.white {
-    background-color: #ffa0c4;
+    /*background-color: #ffa0c4;*/
+    background-color: white;
+    border: 1px solid grey;
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -65,5 +68,5 @@
 }
 
 .border {
-    border: 5px solid #ffae00;
+    border: 5px solid #ff00a2;
 }
