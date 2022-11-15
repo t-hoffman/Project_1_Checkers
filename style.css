@@ -21,8 +21,8 @@
 }
 
 .game-container {
-    width: 500px;
-    height: 500px;
+    width: 640px;
+    height: 640px;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     margin: 0 auto;
@@ -32,10 +32,32 @@
 
 .white {
     background-color: white;
-    padding: 25px;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .black {
     background-color: #efefef;
-    padding: 25px;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.black_checker {
+    background-color: #007be0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.white_checker {
+    background-color: #ffa0c4;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
 }
