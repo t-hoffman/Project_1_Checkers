@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Paytone+One&display=swap');
+
+* {
+    font-family: 'Open Sans', sans-serif;    ;
+}
+
+.main-container {
+    margin: 10% auto;
+    display: flex;
+    flex-direction: column;
+    cursor: default;
+}
+
+.header {
+    font-size: 38pt;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    font-family: 'Paytone One', sans-serif;
+    color: #636363;
+}
+
+.game-container {
+    width: 500px;
+    height: 500px;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    margin: 0 auto;
+    border: 5px solid #efefef;
+    border-radius: 5px;
+}
+
+.white {
+    background-color: white;
+    padding: 25px;
+}
+
+.black {
+    background-color: #efefef;
+    padding: 25px;
+}
