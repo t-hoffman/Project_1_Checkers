@@ -15,14 +15,43 @@ function clearBoard() {
         gameArea.appendChild(newBox);
         if (alt <= 3 && boxClass === 'white') {
             checker = document.createElement('div');
-            checker.classList.add('white_checker');
+            checker.classList.add('checker');
+            checker.classList.add('white');
+            checker.id = i;
             newBox.appendChild(checker);
+            checker.addEventListener('click', checkMoves);
+
         } else if (alt >= 6 && boxClass === 'white') {
             checker = document.createElement('div');
-            checker.classList.add('black_checker');
+            checker.classList.add('checker');
+            checker.classList.add('black');
+            checker.id = i;
             newBox.appendChild(checker);
+            checker.addEventListener('click', checkMoves);
         }
     }
 }
 
 clearBoard();
+
+// Check moves for selected checker piece and highlight selection
+function checkMoves() {
+    // Highlight only on checker piece
+    let checkers = document.querySelectorAll('.checker');
+    let check = 0;
+    let currentButton;
+
+    checkers.forEach((button) => {
+        if (button.classList[2] == 'border') {
+            currentButton = button;
+            check++;
+        }
+    });
+
+    if (!check) {
+        event.target.classList.add('border');
+    } else {
+        currentButton.classList.remove('border');
+        event.target.classList.add('border');
+    }
+}

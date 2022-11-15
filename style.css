@@ -48,16 +48,22 @@
     align-items: center;
 }
 
-.black_checker {
+.checker.black {
     background-color: #007be0;
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    cursor: pointer;
 }
 
-.white_checker {
+.checker.white {
     background-color: #ffa0c4;
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    cursor: pointer;
+}
+
+.border {
+    border: 5px solid #ffae00;
 }
