@@ -25,20 +25,20 @@ function clearBoard() {
             checker.classList.add('checker');
             checker.classList.add('white');
             newBox.appendChild(checker);
-            checker.addEventListener('click', checkOpenMoves);
+            if (playerTurn === 1) checker.addEventListener('click', checkOpenMoves);
             newBox.setAttribute('data-taken', 'white');
         } else if (alt >= 6 && boxClass === 'whiteSpace') {
             checker = document.createElement('div');
             checker.classList.add('checker');
             checker.classList.add('black');
             newBox.appendChild(checker);
-            checker.addEventListener('click', checkOpenMoves);
+            if (playerTurn === 0) checker.addEventListener('click', checkOpenMoves);
             newBox.setAttribute('data-taken', 'black');
         }
     }
 }
 
-clearBoard();
+// clearBoard();
 
 function boardPositions(space = 'all') {
     // Grab all white spaces on the board
@@ -138,9 +138,30 @@ function checkSpaceMovement(space = null, playerTurn = null) {
 function checkOpenMoves() {
     checkSpaceMovement();
 
-    let spaceID = event.target.parentElement.id;
+    let spaceID = parseInt(event.target.parentElement.id);
+    let taken = [];
+    
     spaceMoves[playerTurn][spaceID].forEach((e) => {
-        let spaceDiv = document.getElementById(e);
-        spaceDiv.style.border = '1px solid red';
+        if (e) {
+            let spaceDiv = document.getElementById(e);
+            let player = {1: 'white', 0: 'black'}
+            if (spaceDiv.dataset.taken && spaceDiv.dataset.taken !== player[playerTurn]) {
+                let nextTry = spaceMoves[playerTurn][e];
+                if (playerTurn === 0 && spaceMoves[playerTurn][spaceID][0] === e) {
+                    let leftSpace = document.getElementById(nextTry[0]);
+                    leftSpace.style.border = '1px solid red';
+                    taken.push([e, spaceID]);
+                } else {
+                    let rightSpace = document.getElementById(nextTry[1]);
+                    rightSpace.style.border = '1px solid red';
+                    taken.push([e, spaceID]);
+                }
+            } else if (spaceDiv.dataset.taken !== player[playerTurn]) {
+                spaceDiv.style.border = '1px solid red';
+            }
+            console.log(taken)
+        }
     });
 }
+
+gameArea.addEventListener('click', checkOpenMoves);
