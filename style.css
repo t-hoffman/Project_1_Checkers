@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Paytone+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
 
 * {
     font-family: 'Open Sans', sans-serif;    ;
@@ -12,12 +12,18 @@
 }
 
 .header {
-    font-size: 38pt;
     padding: 10px;
     display: flex;
     justify-content: center;
-    font-family: 'Paytone One', sans-serif;
-    color: #636363;
+    font-family: 'Titan One', sans-serif;
+    font-size: 68pt;
+    color: #9d0000;
+}
+
+.header span {
+    font-family: 'Titan One', sans-serif;
+    font-size: 68pt;
+    color: black;
 }
 
 .game-container {
@@ -95,5 +101,9 @@
     .checker.white, .checker.black {
         width: 20px;
         height: 20px;
+    }
+
+    .header, .header span {
+        font-size: 48pt;
     }
 }

@@ -18,6 +18,7 @@ function clearBoard() {
         newBox.classList.add(boxClass);
         if (boxClass === 'whiteSpace') {
             newBox.id = idCount;
+            newBox.textContent = idCount;
             idCount++;
         }
         gameArea.appendChild(newBox);
@@ -26,14 +27,12 @@ function clearBoard() {
             checker.classList.add('checker');
             checker.classList.add('white');
             newBox.appendChild(checker);
-            //if (playerTurn === 1) checker.addEventListener('click', playGame, {once: true});
             newBox.setAttribute('data-taken', 'white');
         } else if (alt >= 6 && boxClass === 'whiteSpace') {
             checker = document.createElement('div');
             checker.classList.add('checker');
             checker.classList.add('black');
             newBox.appendChild(checker);
-            //if (playerTurn === 0) checker.addEventListener('click', playGame, {once: true});
             newBox.setAttribute('data-taken', 'black');
         }
     }
@@ -109,9 +108,9 @@ function playGame(lastID, taken, direction) {
         checkOpenMoves(event.target.parentElement.id)
     } else if (event.target.classList[1] === 'open') {
         originalSpace = event.target.dataset.id;
-        console.log(originalSpace)
-        toggleMove(originalSpace, event.target.id, event.target.dataset.takeID, direction);
-        playerTurn = playerTurn ? 0 : 1;
+
+        toggleMove(originalSpace, event.target.id, event.target.dataset.takeid, event.target.dataset.dir);
+        playerTurn = playerTurn === 1 ? 0 : 1;
         nextPlayer(playerTurn);
     }
 }
@@ -129,6 +128,9 @@ function checkOpenMoves(spaceID) {
     availPositions.forEach((e) => {
         let availDiv = document.getElementById(e);
         availDiv.classList.remove('open');
+        availDiv.removeAttribute('data-id');
+        availDiv.removeAttribute('data-takeid');
+        availDiv.removeAttribute('data-otherid');
     });
 
     // Check if space clicked is equal to the current player's color
@@ -136,7 +138,6 @@ function checkOpenMoves(spaceID) {
     if (currentSpace.dataset.taken === player[playerTurn]) {
         spaceMoves[playerTurn][spaceID].forEach((e) => {
             if (e) {
-                let taken = [];
                 let thisDiv = document.getElementById(e);
                 let spaceTaken = thisDiv.dataset.taken;
 
@@ -149,45 +150,33 @@ function checkOpenMoves(spaceID) {
 
                     // Try next space first if(original left move === this space in the loop, highlight open next left move) 
 
-                    if (originalLeft === e && availPositions.includes(nextTry[0]) && nextTry[0]) {
+                    if (originalLeft === e && availPositions.includes(nextTry[0])) {
                         let leftSpace = document.getElementById(nextTry[0]);
                         leftSpace.classList.add('open');
                         leftSpace.dataset.id = spaceID;
-                        leftSpace.dataset.takeID = e;
-                        //leftSpace.addEventListener('click', () => {playGame(spaceID, taken, 0)
-                            //toggleMove(spaceID, taken, 0)
-                        //}, {once: true});
-                        // taken space [this space, original space]
-                        taken.push([e, spaceID]);
-                    } else if (originalRight === e && availPositions.includes(nextTry[1] && nextTry[1])) {
+                        leftSpace.dataset.takeid = e;
+                        leftSpace.dataset.otherid = originalRight;
+                    } else if (originalRight === e && availPositions.includes(nextTry[1])) {
                         let rightSpace = document.getElementById(nextTry[1]);
                         rightSpace.classList.add('open');
                         rightSpace.dataset.id = spaceID;
-                        rightSpace.dataset.takeID = e;
-                        // rightSpace.addEventListener('click', () => {playGame(spaceID, taken, 1)
-                        //     //toggleMove(spaceID, taken, 1)
-                        // }, {once: true});
-                        taken.push([e, spaceID]);
+                        rightSpace.dataset.takeid = e;
+                        rightSpace.dataset.otherid = originalLeft;
                     }
                 } else if (!spaceTaken && spaceTaken !== player[playerTurn]) {
                     thisDiv.classList.add('open');
                     thisDiv.dataset.id = spaceID;
-                    // thisDiv.addEventListener('click', () => {playGame(spaceID)
-                    //     //toggleMove(spaceID)
-                    // }, {once: true});
                 }
             }
         });
-    } else {
-        console.log('JJFJJDJD')
     }
-    return;
 }
 
 function toggleMove(prev, next, take, direction) {
-    console.log(`prev: ${prev} next: ${next}`);
+    //console.log(`prev: ${prev} next: ${next}, take: ${take}`);
     const nextSpace = document.getElementById(next);
     if (!nextSpace.dataset.taken) {
+        // Place player checker color piece onto next space
         nextSpace.setAttribute('data-taken', player[playerTurn]);
         nextSpace.classList.remove('open');
         const newChip = document.createElement('div');
@@ -198,32 +187,44 @@ function toggleMove(prev, next, take, direction) {
         prevSpace.removeAttribute('data-taken');
         prevSpace.innerHTML = '';
 
+        // Take other player chip off
         if (take) {
             const takeChip = document.getElementById(take);
             takeChip.removeAttribute('data-taken');
             takeChip.innerHTML = '';
         }
+
+        // Remove attributes passed through non-hop option 
+        nextSpace.removeAttribute('data-takeid');
+        nextSpace.removeAttribute('data-id');
+        nextSpace.removeAttribute('data-otherid');
+
+        // Remove attributes of left/right options for previous move
+        let originalLeft = document.getElementById(spaceMoves[playerTurn][prev][0]);
+        let originalRight = document.getElementById(spaceMoves[playerTurn][prev][1]);
+        if (spaceMoves[playerTurn][prev][0] == next) {
+            originalRight.removeAttribute('data-id');
+            originalRight.removeAttribute('data-takeid');
+            originalRight.removeAttribute('data-otherid');
+        } else {
+            originalLeft.removeAttribute('data-id');
+            originalLeft.removeAttribute('data-takeid');
+            originalLeft.removeAttribute('data-otherid');
+        }
     }
-    // playerTurn = playerTurn ? 0 : 1;
-    //nextPlayer(playerTurn);
-    //gameArea.addEventListener('click', () => {checkOpenMoves(); console.log('1')});
 }
 
 function nextPlayer(turn) {
     boardPositions();
-console.log('nextPlayer()');
+
     availPositions.forEach((e) => {
         let availDiv = document.getElementById(e);
         availDiv.classList.remove('open');
     });
 
-    takenPositions[turn].forEach((e) => {
-        let thisChecker = document.getElementById(e);
-        thisChecker.addEventListener('click', playGame, {once: true})
-    });
+    console.log(`BLACK: ${takenPositions[0].length} - WHITE: ${takenPositions[1].length}`);
 }
 
 //gameArea.addEventListener('click', checkOpenMoves);
 //clearBoard();
 boardPositions();
-//console.log(`BLACK: ${takenPositions[0].length} - WHITE: ${takenPositions[1].length}`);
