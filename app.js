@@ -24,6 +24,7 @@ function clearBoard() {
         newBox.classList.add(boxClass);
         if (boxClass === 'whiteSpace') {
             newBox.id = idCount;
+            newBox.textContent = idCount;
             idCount++;
         }
         gameArea.appendChild(newBox);
@@ -44,6 +45,54 @@ function clearBoard() {
 }
 
 clearBoard();
+
+// Assemble each space movement according to the board & direction
+// return spaceMoves array ([0] black, [1] white, spaceMoves[0][spaceID], etc.)
+// black can only move up ( - ), white down ( + ) visually
+
+function gatherSpaceMovements() {
+    let checkerBoxes = document.querySelectorAll('.whiteSpace');
+    this.spaceMoves = [[[]],[[]]];
+    const leftEdge = [5,13,21,29];
+    const rightEdge = [4,12,20,28];
+    let alt = 0;
+    let check = 0;
+
+    checkerBoxes.forEach((e) => {
+        let boxID = parseInt(e.id);
+        let isLeftEdge = leftEdge.includes(boxID);
+        let isRightEdge = rightEdge.includes(boxID);
+        if (alt % 4 === 0) {
+            alt = 0; check++;
+        }
+
+        let b_left = check % 2 === 0 ? boxID-5 : boxID-4;
+        let b_right = check % 2 === 0 ? boxID-4 : boxID-3;
+        let w_left = check % 2 === 0 ? boxID+3 : boxID+4;
+        let w_right = check % 2 === 0 ? boxID+4 : boxID+5;
+
+        if (!isLeftEdge && !isRightEdge) {
+            if (boxID > 4) spaceMoves[0].push([b_left, b_right]);
+            if (boxID < 29) spaceMoves[1].push([w_left, w_right]);
+        } else if (isLeftEdge) {
+            if (boxID > 4) spaceMoves[0].push([0, b_right]);
+            if (boxID < 29) spaceMoves[1].push([0, w_right]);
+        } else if (isRightEdge) {
+            if (boxID > 4) spaceMoves[0].push([b_left, 0]);
+            if (boxID < 29) spaceMoves[1].push([w_left, 0]);
+        }
+
+        if (boxID < 5) {spaceMoves[0][boxID] = [];}
+        if (boxID > 28) {spaceMoves[1][boxID] = [];}
+
+        alt++;
+    });
+}
+
+gatherSpaceMovements();
+
+
+// Gather available and taken positions to an array
 
 function boardPositions(type = 'all') {
     // Grab all white spaces on the board
@@ -68,100 +117,88 @@ function boardPositions(type = 'all') {
     if (type === 'black') return takenPositions[0];
 }
 
+boardPositions();
 
-function checkSpaceMovements() {
-    let checkerBoxes = document.querySelectorAll('.whiteSpace');
-    this.spaceMoves = [[],[]];
-    const leftEdge = [5,13,21,29];
-    const rightEdge = [4,12,20,28];
-    let alt = 0;
-    let check = 0;
+// Check open moves for a specific piece on the board & highlight
 
-    checkerBoxes.forEach((e) => {
-        let boxID = parseInt(e.id);
-        let isLeftEdge = leftEdge.includes(boxID);
-        let isRightEdge = rightEdge.includes(boxID);
-        if (alt % 4 === 0) {
-            alt = 0; check++;
-        }
-
-        let b_left = check % 2 === 0 ? boxID-5 : boxID-4;
-        let b_right = check % 2 === 0 ? boxID-4 : boxID-3;
-        let w_left = check % 2 === 0 ? boxID+3 : boxID+4;
-        let w_right = check % 2 === 0 ? boxID+4 : boxID+5;
-
-        if (!isLeftEdge && !isRightEdge) {
-            if (boxID > 4) spaceMoves[0][boxID] = [b_left, b_right];
-            if (boxID < 29) spaceMoves[1][boxID] = [w_left, w_right];
-        } else if (isLeftEdge) {
-            if (boxID > 4) spaceMoves[0][boxID] = [0, b_right];
-            if (boxID < 29) spaceMoves[1][boxID] = [0, w_right]
-        } else if (isRightEdge) {
-            if (boxID > 4) spaceMoves[0][boxID] = [b_left, 0];
-            if (boxID < 29) spaceMoves[1][boxID] = [w_left, 0];
-        }
-
-        if (boxID < 5) {spaceMoves[0][boxID] = [];}
-        if (boxID > 28) {this.spaceMoves[1][boxID] = []}
-
-        alt++;
-    });
-}
-
-function checkOpenMoves(spaceID) {
-    checkSpaceMovements();
-    boardPositions();
+function checkOpenMoves(spaceID, counter = false) {
 
     //let spaceID = parseInt(event.target.parentElement.id);
 
     let currentSpace = document.getElementById(spaceID);
-
-    // Remove any highlighted open spaces & attribute data that is not in use anymore
-
-    availPositions.forEach((e) => {
-        let availDiv = document.getElementById(e);
-        availDiv.classList.remove('open');
-        availDiv.removeAttribute('data-id');
-        availDiv.removeAttribute('data-takeid');
-    });
-
+    this.countMoves = [];
+    
     // Check if space clicked is equal to the current player's color
+    let isKing = false;
+    if (counter === true || currentSpace.dataset.taken === player[playerTurn]) {
+        if (counter === false || isKing) {
+            // Remove any highlighted open spaces & attribute data that is not in use anymore
+            availPositions.forEach((e) => {
+                let availDiv = document.getElementById(e);
+                availDiv.classList.remove('open');
+                availDiv.removeAttribute('data-id');
+                availDiv.removeAttribute('data-takeid');
+            });
 
-    if (currentSpace.dataset.taken === player[playerTurn]) {
-        spaceMoves[playerTurn][spaceID].forEach((e) => {
-            if (e) {
-                let thisDiv = document.getElementById(e);
-                let spaceTaken = thisDiv.dataset.taken;
+            toggleOpenMoves(spaceID, playerTurn, false)
+        } else {
+            //return toggleOpenMoves(spaceID, playerTurn, counter)
+        }
+    }
+    
+    return this.countMoves;
+}
 
-                // If next space is taken & it is not current player color
+function toggleOpenMoves(spaceID, playerID, counter = false) {
+    let countMoves = [];
 
-                if (spaceTaken && spaceTaken !== player[playerTurn]) {
-                    let nextTry = spaceMoves[playerTurn][e];
-                    let originalLeft = spaceMoves[playerTurn][spaceID][0];
-                    let originalRight = spaceMoves[playerTurn][spaceID][1];
+    spaceMoves[playerID][spaceID].forEach((e) => {
+        if (e) {
+            let thisDiv = document.getElementById(e);
+            let spaceTaken = thisDiv.dataset.taken;
 
-                    // Try next space first if(original left move === this space in the loop)
-                    // then highlight open next left move
+            // If next space is taken & it is not current player color
 
-                    if (originalLeft === e && availPositions.includes(nextTry[0])) {
-                        // Set attributes to pass along data vs. numerous event listeners
-                        let leftSpace = document.getElementById(nextTry[0]);
-                        leftSpace.classList.add('open');
-                        leftSpace.dataset.id = spaceID;
-                        leftSpace.dataset.takeid = e;
-                    } else if (originalRight === e && availPositions.includes(nextTry[1])) {
-                        let rightSpace = document.getElementById(nextTry[1]);
-                        rightSpace.classList.add('open');
-                        rightSpace.dataset.id = spaceID;
-                        rightSpace.dataset.takeid = e;
+            if (spaceTaken && spaceTaken !== player[playerID]) {
+                let nextTry = spaceMoves[playerID][e];
+                let originalLeft = spaceMoves[playerID][spaceID][0];
+                let originalRight = spaceMoves[playerID][spaceID][1];
+
+                // Try next space first if(original left move === this space in the loop)
+                // then highlight open next left move
+
+                if (originalLeft === e && availPositions.includes(nextTry[0])) {
+                    if (counter == false) {
+                    // Set attributes to pass along data vs. numerous event listeners
+                    let leftSpace = document.getElementById(nextTry[0]);
+                    leftSpace.classList.add('open');
+                    leftSpace.dataset.id = spaceID;
+                    leftSpace.dataset.takeid = e;
+                                } else {
+                        countMoves.push(e);
                     }
-                } else if (!spaceTaken && spaceTaken !== player[playerTurn]) {
-                    thisDiv.classList.add('open');
-                    thisDiv.dataset.id = spaceID;
+                } else if (originalRight === e && availPositions.includes(nextTry[1])) {
+                    if (counter == false) {
+                    let rightSpace = document.getElementById(nextTry[1]);
+                    rightSpace.classList.add('open');
+                    rightSpace.dataset.id = spaceID;
+                    rightSpace.dataset.takeid = e;
+                    } else {
+                        countMoves.push(e);
+                    }
+                }
+            } else if (!spaceTaken && spaceTaken !== player[playerID]) {
+                if (counter == false) {
+                thisDiv.classList.add('open');
+                thisDiv.dataset.id = spaceID;
+                } else {
+                    countMoves.push(e);
                 }
             }
-        });
-    }
+        }
+    });
+
+    return countMoves;
 }
 
 function toggleMove(prev, next, take) {
@@ -193,7 +230,29 @@ function toggleMove(prev, next, take) {
     }
 }
 
+function checkForWinner() {
+    let b_counter = 0;
+    let w_counter = 0;
+    
+    takenPositions[0].forEach((s) => {
+        if (toggleOpenMoves(s, 0, true).length > 0) b_counter++;
+    });
+
+    takenPositions[1].forEach((s) => {
+        if (toggleOpenMoves(s, 1, true).length > 0) w_counter++;
+    });
+console.log(`${w_counter} ${b_counter}`)
+    if (b_counter === 0 || w_counter === 0) {
+        let winner = takenPositions[0].length > takenPositions[1].length ? 'black' : 'white';
+        alert(`WINNER IS ${winner}`)
+    }
+}
+
+
 function playGame() {
+    checkForWinner()
+    //console.log(toggleOpenMoves(22, 0, true))
+    
     // This is the function executed around the entire gameArea using an even listener
     if (event.target.classList[1] === player[playerTurn]) {
         // Display open moves for the clicked spot

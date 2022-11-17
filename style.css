@@ -36,11 +36,33 @@ body {
     align-items: center;
     padding: 15px;
     background-color: #efefef;
-    border-radius: 0 0 10px 10px;
+    border-radius: 0 0 0 10px;
+    height: 50px;
+    font-family: 'Titan One', sans-serif;
+    font-size: 14pt;
+}
+
+.score {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #2795e4;
+    border-radius: 0 0 10px 0;
     width: 200px;
     height: 50px;
     font-family: 'Titan One', sans-serif;
     font-size: 14pt;
+}
+
+.scores {
+    height: 25px;
+    background-color: white;
+    border-radius: 5px;
+    padding: 5px 15px;
+    margin-left: 20px;
+    width: 100px;
+    display: flex;
+    align-items: center;
 }
 
 .game-container {
@@ -126,5 +148,9 @@ body {
 
     .footer {
         margin: 0 0 10px 0;
+    }
+
+    .score {
+        width: 125px;
     }
 }
