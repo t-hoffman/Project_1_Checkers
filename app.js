@@ -18,7 +18,6 @@ function clearBoard() {
         newBox.classList.add(boxClass);
         if (boxClass === 'whiteSpace') {
             newBox.id = idCount;
-            newBox.innerHTML = idCount;
             idCount++;
         }
         gameArea.appendChild(newBox);
@@ -97,6 +96,9 @@ function checkSpaceMovement() {
             if (boxID > 4) spaceMoves[0][boxID] = [b_left, 0];
             if (boxID < 29) spaceMoves[1][boxID] = [w_left, 0];
         }
+
+        if (boxID < 5) {spaceMoves[0][boxID] = [];}
+        if (boxID > 28) {this.spaceMoves[1][boxID] = []}
 
         alt++;
     });
