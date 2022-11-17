@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
 
-* {
+body {
     font-family: 'Open Sans', sans-serif;    ;
 }
 
@@ -24,6 +24,23 @@
     font-family: 'Titan One', sans-serif;
     font-size: 68pt;
     color: black;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: center;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #efefef;
+    border-radius: 0 0 10px 10px;
+    width: 200px;
+    height: 50px;
+    font-family: 'Titan One', sans-serif;
+    font-size: 14pt;
 }
 
 .game-container {
@@ -105,5 +122,9 @@
 
     .header, .header span {
         font-size: 48pt;
+    }
+
+    .footer {
+        margin: 0 0 10px 0;
     }
 }

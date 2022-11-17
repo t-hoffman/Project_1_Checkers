@@ -18,7 +18,6 @@ function clearBoard() {
         newBox.classList.add(boxClass);
         if (boxClass === 'whiteSpace') {
             newBox.id = idCount;
-            newBox.textContent = idCount;
             idCount++;
         }
         gameArea.appendChild(newBox);
@@ -202,11 +201,11 @@ function toggleMove(prev, next, take, direction) {
         // Remove attributes of left/right options for previous move
         let originalLeft = document.getElementById(spaceMoves[playerTurn][prev][0]);
         let originalRight = document.getElementById(spaceMoves[playerTurn][prev][1]);
-        if (spaceMoves[playerTurn][prev][0] == next) {
+        if (spaceMoves[playerTurn][prev][0] == next && originalRight) {
             originalRight.removeAttribute('data-id');
             originalRight.removeAttribute('data-takeid');
             originalRight.removeAttribute('data-otherid');
-        } else {
+        } else if (originalLeft) {
             originalLeft.removeAttribute('data-id');
             originalLeft.removeAttribute('data-takeid');
             originalLeft.removeAttribute('data-otherid');
@@ -222,9 +221,13 @@ function nextPlayer(turn) {
         availDiv.classList.remove('open');
     });
 
+    const playerTurnFooter = document.getElementById('player-turn');console.log(playerTurnFooter)
+    playerTurnFooter.classList.remove(playerTurn ? 'black' : 'white');
+    playerTurnFooter.classList.add(player[playerTurn]);
+
     console.log(`BLACK: ${takenPositions[0].length} - WHITE: ${takenPositions[1].length}`);
 }
 
 //gameArea.addEventListener('click', checkOpenMoves);
 //clearBoard();
-boardPositions();
+//boardPositions();
