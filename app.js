@@ -185,21 +185,23 @@ function checkOpenMoves(spaceID) {
 function toggleMove(prev, next, take, direction) {
     console.log(`prev: ${prev} next: ${next}`);
     const nextSpace = document.getElementById(next);
-    nextSpace.setAttribute('data-taken', player[playerTurn]);
-    const newChip = document.createElement('div');
-    newChip.classList.add('checker');
-    newChip.classList.add(player[playerTurn]);
-    nextSpace.appendChild(newChip);
-    const prevSpace = document.getElementById(prev);
-    prevSpace.removeAttribute('data-taken');
-    prevSpace.innerHTML = '';
+    if (!nextSpace.dataset.taken) {
+        nextSpace.setAttribute('data-taken', player[playerTurn]);
+        nextSpace.classList.remove('open');
+        const newChip = document.createElement('div');
+        newChip.classList.add('checker');
+        newChip.classList.add(player[playerTurn]);
+        nextSpace.appendChild(newChip);
+        const prevSpace = document.getElementById(prev);
+        prevSpace.removeAttribute('data-taken');
+        prevSpace.innerHTML = '';
 
-    if (take) {
-        const takeChip = document.getElementById(take);
-        takeChip.removeAttribute('data-taken');
-        takeChip.innerHTML = '';
+        if (take) {
+            const takeChip = document.getElementById(take);
+            takeChip.removeAttribute('data-taken');
+            takeChip.innerHTML = '';
+        }
     }
-
     // playerTurn = playerTurn ? 0 : 1;
     //nextPlayer(playerTurn);
     //gameArea.addEventListener('click', () => {checkOpenMoves(); console.log('1')});
@@ -216,10 +218,6 @@ console.log('nextPlayer()');
     takenPositions[turn].forEach((e) => {
         let thisChecker = document.getElementById(e);
         thisChecker.addEventListener('click', playGame, {once: true})
-    });
-
-    takenPositions[turn ? 0 : 1].forEach((e) => {
-        document.getElementById(e).removeEventListener('click', playGame);
     });
 }
 
