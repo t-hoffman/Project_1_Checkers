@@ -48,6 +48,11 @@
     align-items: center;
 }
 
+.open {
+    background-color: #d3ffbe;
+    cursor: pointer;
+}
+
 .checker.black {
     /*background-color: dodgerblue;*/
     background-color: black;
@@ -69,4 +74,26 @@
 
 .border {
     border: 5px solid #ff00a2;
+}
+
+@media screen and (max-width: 540px) {
+    .game-container {
+        width: 368px;
+        height: 368px;
+    }
+
+    .whiteSpace {
+        width: 46px;
+        height: 46px;
+    }
+
+    .blackSpace {
+        width: 46px;
+        height: 46px;
+    }
+
+    .checker.white, .checker.black {
+        width: 20px;
+        height: 20px;
+    }
 }

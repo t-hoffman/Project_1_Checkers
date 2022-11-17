@@ -3,7 +3,9 @@
 */
 
 const gameArea = document.querySelector('.game-container');
+gameArea.addEventListener('click', playGame);
 let playerTurn = 0; // 0 is black, 1 is white
+const player = {1: 'white', 0: 'black'}
 
 function clearBoard() {
     let alt = 0;
@@ -25,81 +27,46 @@ function clearBoard() {
             checker.classList.add('checker');
             checker.classList.add('white');
             newBox.appendChild(checker);
-            if (playerTurn === 1) checker.addEventListener('click', checkOpenMoves);
+            //if (playerTurn === 1) checker.addEventListener('click', playGame, {once: true});
             newBox.setAttribute('data-taken', 'white');
         } else if (alt >= 6 && boxClass === 'whiteSpace') {
             checker = document.createElement('div');
             checker.classList.add('checker');
             checker.classList.add('black');
             newBox.appendChild(checker);
-            if (playerTurn === 0) checker.addEventListener('click', checkOpenMoves);
+            //if (playerTurn === 0) checker.addEventListener('click', playGame, {once: true});
             newBox.setAttribute('data-taken', 'black');
         }
     }
 }
 
-// clearBoard();
+clearBoard();
 
-function boardPositions(space = 'all') {
+function boardPositions(type = 'all') {
     // Grab all white spaces on the board
     const boardSpaces = document.querySelectorAll('.whiteSpace');
     this.availPositions = []; // All positions
     this.takenPositions = [[], []]; // Taken positions by 0: white player, 1: black player
     boardSpaces.forEach((space) => {
-        let isFilled = space.querySelector('.checker');
-        if (isFilled && isFilled.classList[1] === 'black') {
+        let isFilled = space.dataset.taken;
+        
+        if (isFilled && isFilled === 'black') {
             takenPositions[0].push(parseInt(space.id));
             
-        } else if (isFilled && isFilled.classList[1] === 'white') {
+        } else if (isFilled && isFilled === 'white') {
             takenPositions[1].push(parseInt(space.id));
         } else {
             availPositions.push(parseInt(space.id))
         }
     });
 
-    if (space === 'all') return availPositions;
-    if (space === 'white') return takenPositions[0];
-    if (space === 'black') takenPositions[1];
-
-    let isLeftEdge = [8, 24, 40, 56];
-    let isRightEdge = [7, 23, 39, 55];
-    isLeftEdge = isLeftEdge.includes(space);
-    isRightEdge = isRightEdge.includes(space);
-
-    if (playerTurn) {
-
-    } else {
-        if (!isLeftEdge && !isRightEdge) {
-            
-
-
-            // let try1 = (space-7).toString();
-            // let try2 = (space-9).toString();
-
-            // if (availPositions.includes(try1)) nextRow.push(try1);
-            // if (availPositions.includes(try2)) nextRow.push(try2);
-            
-            // if (nextRow.length === 2) {
-            //     return nextRow;
-            // } else if (nextRow.length == 1) {
-            //     return nextRow;
-            // } else {
-            //     return boardPositions(try1);
-            // }
-        } else if (isLeftEdge) {
-            let nextRow = space-7;
-            let check1 = document.getElementById(nextRow).getAttribute('data-taken');
-            if (!check1) return nextRow;
-        } else if (isRightEdge) {
-            let nextRow = space-9;
-            let check1 = document.getElementById(nextRow).getAttribute('data-taken');
-            if (!check1) return nextRow;
-        }
-    } 
+    if (type === 'all') return availPositions;
+    if (type === 'white') return takenPositions[1];
+    if (type === 'black') return takenPositions[0];
 }
 
 
-function checkSpaceMovement(space = null, playerTurn = null) {
+function checkSpaceMovement() {
     let checkerBoxes = document.querySelectorAll('.whiteSpace');
     this.spaceMoves = [[],[]];
     const leftEdge = [5,13,21,29];
@@ -135,33 +102,128 @@ function checkSpaceMovement(space = null, playerTurn = null) {
     });
 }
 
-function checkOpenMoves() {
-    checkSpaceMovement();
+function playGame(lastID, taken, direction) {
+    if (event.target.classList[1] === player[playerTurn]) {
+        checkOpenMoves(event.target.parentElement.id)
+    } else if (event.target.classList[1] === 'open') {
+        originalSpace = event.target.dataset.id;
+        console.log(originalSpace)
+        toggleMove(originalSpace, event.target.id, event.target.dataset.takeID, direction);
+        playerTurn = playerTurn ? 0 : 1;
+        nextPlayer(playerTurn);
+    }
+}
 
-    let spaceID = parseInt(event.target.parentElement.id);
-    let taken = [];
-    
-    spaceMoves[playerTurn][spaceID].forEach((e) => {
-        if (e) {
-            let spaceDiv = document.getElementById(e);
-            let player = {1: 'white', 0: 'black'}
-            if (spaceDiv.dataset.taken && spaceDiv.dataset.taken !== player[playerTurn]) {
-                let nextTry = spaceMoves[playerTurn][e];
-                if (playerTurn === 0 && spaceMoves[playerTurn][spaceID][0] === e) {
-                    let leftSpace = document.getElementById(nextTry[0]);
-                    leftSpace.style.border = '1px solid red';
-                    taken.push([e, spaceID]);
-                } else {
-                    let rightSpace = document.getElementById(nextTry[1]);
-                    rightSpace.style.border = '1px solid red';
-                    taken.push([e, spaceID]);
+function checkOpenMoves(spaceID) {
+    checkSpaceMovement();
+    boardPositions();
+
+    //let spaceID = parseInt(event.target.parentElement.id);
+
+    let currentSpace = document.getElementById(spaceID);
+
+    // Remove any highlighted open spaces
+
+    availPositions.forEach((e) => {
+        let availDiv = document.getElementById(e);
+        availDiv.classList.remove('open');
+    });
+
+    // Check if space clicked is equal to the current player's color
+
+    if (currentSpace.dataset.taken === player[playerTurn]) {
+        spaceMoves[playerTurn][spaceID].forEach((e) => {
+            if (e) {
+                let taken = [];
+                let thisDiv = document.getElementById(e);
+                let spaceTaken = thisDiv.dataset.taken;
+
+                // If next space is taken & it is not current player color
+
+                if (spaceTaken && spaceTaken !== player[playerTurn]) {
+                    let nextTry = spaceMoves[playerTurn][e];
+                    let originalLeft = spaceMoves[playerTurn][spaceID][0];
+                    let originalRight = spaceMoves[playerTurn][spaceID][1];
+
+                    // Try next space first if(original left move === this space in the loop, highlight open next left move) 
+
+                    if (originalLeft === e && availPositions.includes(nextTry[0]) && nextTry[0]) {
+                        let leftSpace = document.getElementById(nextTry[0]);
+                        leftSpace.classList.add('open');
+                        leftSpace.dataset.id = spaceID;
+                        leftSpace.dataset.takeID = e;
+                        //leftSpace.addEventListener('click', () => {playGame(spaceID, taken, 0)
+                            //toggleMove(spaceID, taken, 0)
+                        //}, {once: true});
+                        // taken space [this space, original space]
+                        taken.push([e, spaceID]);
+                    } else if (originalRight === e && availPositions.includes(nextTry[1] && nextTry[1])) {
+                        let rightSpace = document.getElementById(nextTry[1]);
+                        rightSpace.classList.add('open');
+                        rightSpace.dataset.id = spaceID;
+                        rightSpace.dataset.takeID = e;
+                        // rightSpace.addEventListener('click', () => {playGame(spaceID, taken, 1)
+                        //     //toggleMove(spaceID, taken, 1)
+                        // }, {once: true});
+                        taken.push([e, spaceID]);
+                    }
+                } else if (!spaceTaken && spaceTaken !== player[playerTurn]) {
+                    thisDiv.classList.add('open');
+                    thisDiv.dataset.id = spaceID;
+                    // thisDiv.addEventListener('click', () => {playGame(spaceID)
+                    //     //toggleMove(spaceID)
+                    // }, {once: true});
                 }
-            } else if (spaceDiv.dataset.taken !== player[playerTurn]) {
-                spaceDiv.style.border = '1px solid red';
             }
-            console.log(taken)
-        }
+        });
+    } else {
+        console.log('JJFJJDJD')
+    }
+    return;
+}
+
+function toggleMove(prev, next, take, direction) {
+    console.log(`prev: ${prev} next: ${next}`);
+    const nextSpace = document.getElementById(next);
+    nextSpace.setAttribute('data-taken', player[playerTurn]);
+    const newChip = document.createElement('div');
+    newChip.classList.add('checker');
+    newChip.classList.add(player[playerTurn]);
+    nextSpace.appendChild(newChip);
+    const prevSpace = document.getElementById(prev);
+    prevSpace.removeAttribute('data-taken');
+    prevSpace.innerHTML = '';
+
+    if (take) {
+        const takeChip = document.getElementById(take);
+        takeChip.removeAttribute('data-taken');
+        takeChip.innerHTML = '';
+    }
+
+    // playerTurn = playerTurn ? 0 : 1;
+    //nextPlayer(playerTurn);
+    //gameArea.addEventListener('click', () => {checkOpenMoves(); console.log('1')});
+}
+
+function nextPlayer(turn) {
+    boardPositions();
+console.log('nextPlayer()');
+    availPositions.forEach((e) => {
+        let availDiv = document.getElementById(e);
+        availDiv.classList.remove('open');
+    });
+
+    takenPositions[turn].forEach((e) => {
+        let thisChecker = document.getElementById(e);
+        thisChecker.addEventListener('click', playGame, {once: true})
+    });
+
+    takenPositions[turn ? 0 : 1].forEach((e) => {
+        document.getElementById(e).removeEventListener('click', playGame);
     });
 }
 
-gameArea.addEventListener('click', checkOpenMoves);
+//gameArea.addEventListener('click', checkOpenMoves);
+//clearBoard();
+boardPositions();
+//console.log(`BLACK: ${takenPositions[0].length} - WHITE: ${takenPositions[1].length}`);
