@@ -47,7 +47,7 @@ function clearBoard() {
     }
 }
 
-clearBoard();
+//clearBoard();
 
 // Assemble each space movement according to the board & direction visually
 // return spaceMoves: array ([0] black, [1] white, spaceMoves[0][spaceID], etc.)
@@ -281,20 +281,29 @@ function checkForWinner() {
     });    
 
     if (takenPositions[0].length <= 0 || takenPositions[1].legnth <= 0 || b_counter === 0 || w_counter === 0) {
-        let winner = takenPositions[0].length > takenPositions[1].length ? 'black' : 'white';
-
         // DOM manipulation of 'player turn' in footer of game board
         // without calling nextPlayer() so as not to run another loop
+        let winner = takenPositions[0].length > takenPositions[1].length ? 'black' : 'white';
         const playerTurnFooter = document.getElementById('player-turn');
         score[playerTurn]++;
 
-        playerTurnFooter.classList.remove(playerTurn ? 'black' : 'white');
-        playerTurnFooter.classList.add(player[playerTurn]);
-
+        playerTurnFooter.classList.remove(playerTurnFooter.classList[1]);
+        playerTurnFooter.classList.add(winner);
         const playerScores = document.getElementById(`${winner}-score`);
         playerScores.textContent = score[playerTurn];
 
-        alert(`WINNER IS ${winner}`);
+        // Winner modal
+        const winnerModal = document.getElementById('winner-modal');
+        const modalContent = document.querySelector('.modal-text');
+        const span = document.getElementsByClassName('close')[0];
+        winnerModal.style.display = 'block';
+        modalContent.textContent = `WINNER IS ${winner}`;
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            winnerModal.style.display = 'none';
+        }
+  
+        //alert(`WINNER IS ${winner}`);
         playerTurn = winner === 'black' ? 0 : 1;
         clearBoard();
     }
