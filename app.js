@@ -16,6 +16,9 @@ const player = {1: 'white', 0: 'black'}
 function clearBoard() {
     let alt = 0;
     let idCount = 1;
+    
+    if (gameArea.innerHTML) gameArea.innerHTML = '';
+    
     for (let i = 0; i < 64; i++) {
         if (i % 8 === 0) alt++;
         let boxClass = alt % 2 === 0 ? (i % 2 === 0 ? 'whiteSpace' : 'blackSpace') 
@@ -51,7 +54,8 @@ clearBoard();
 
 function gatherSpaceMovements() {
     let checkerBoxes = document.querySelectorAll('.whiteSpace');
-    this.spaceMoves = [[[]],[[]]];
+    // [[0]->[1],[2] .. ], [1]->[1],[2]] // this[0] black this[1] white
+    this.spaceMoves = [[[]],[[]]]; 
     const leftEdge = [5,13,21,29];
     const rightEdge = [4,12,20,28];
     let alt = 0;
@@ -146,6 +150,8 @@ function checkOpenMoves(spaceID) {
     }
 }
 
+// Display open space(s), also anonymous use to check total moves left on board
+
 function toggleOpenMoves(spaceID, playerID, counter = false, isKing = false, kingColor) {
     let countMoves = [];
     let originalColor = kingColor ? kingColor : document.getElementById(spaceID).dataset.taken;
@@ -199,6 +205,8 @@ function toggleOpenMoves(spaceID, playerID, counter = false, isKing = false, kin
     return countMoves;
 }
 
+// Move the pieces on the board
+
 function toggleMove(prev, next, take) {
     // Prev: space from which piece is being moved from, next: space moving to, 
     // take: remove opponent if possible
@@ -236,6 +244,7 @@ function checkForWinner() {
     const w_kings = [];
     const b_kings = [];
     
+    // Check all taken black positions for any available moves, count (note king spaces)
     takenPositions[0].forEach((s) => {
         let thisDiv = document.getElementById(s);
         if (thisDiv.firstChild.classList.contains('king')) {
@@ -245,6 +254,7 @@ function checkForWinner() {
         }
     });
 
+    // Iterate through black king spaces for available moves, count
     b_kings.forEach((k) => {
         if (toggleOpenMoves(k, 0, true, true, 'black')) b_counter++;
     });
@@ -264,29 +274,32 @@ function checkForWinner() {
 
     if (takenPositions[0].length <= 0 || takenPositions[1].legnth <= 0 || b_counter === 0 || w_counter === 0) {
         let winner = takenPositions[0].length > takenPositions[1].length ? 'black' : 'white';
-        alert(`WINNER IS ${winner}`)
+        alert(`WINNER IS ${winner}`);
+        clearBoard();
     }
 }
 
 
-function playGame() {
-    checkForWinner();
-    
+function playGame() {    
     // This is the function executed around the entire gameArea using an even listener
 
-    if (event.target.classList.contains(player[playerTurn])) {
+    let clickedSpace = event.target.classList;
+
+    if (clickedSpace.contains(player[playerTurn])) {
         // Display open moves for the clicked spot
         checkOpenMoves(event.target.parentElement.id);
-    } else if (event.target.classList.contains('open')) {
+    } else if (clickedSpace.contains('open')) {
         // Toggle the clicked open spot and move the piece/take any opponent pieces
         originalSpace = event.target.dataset.id;
 
         toggleMove(originalSpace, event.target.id, event.target.dataset.takeid);
         playerTurn = playerTurn === 1 ? 0 : 1;
         nextPlayer(playerTurn);
-    } else if (event.target.classList.contains('king')) {
+    } else if (clickedSpace.contains('king')) {
         checkOpenMoves(event.target.parentElement.id);
     }
+
+    checkForWinner();
 }
 
 function nextPlayer(turn) {
