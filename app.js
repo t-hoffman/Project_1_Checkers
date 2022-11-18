@@ -7,11 +7,12 @@
 ###############################################################
 */
 
-// Add event listener to the game board parent
+// Event delegation using the parent element (.game-container)
 const gameArea = document.querySelector('.game-container');
 gameArea.addEventListener('click', playGame);
 let playerTurn = 0; // 0 is black, 1 is white
 const player = {1: 'white', 0: 'black'}
+let score = [0, 0];
 
 function clearBoard() {
     let alt = 0;
@@ -48,9 +49,9 @@ function clearBoard() {
 
 clearBoard();
 
-// Assemble each space movement according to the board & direction
-// return spaceMoves array ([0] black, [1] white, spaceMoves[0][spaceID], etc.)
-// black can only move up ( - ), white down ( + ) visually
+// Assemble each space movement according to the board & direction visually
+// return spaceMoves: array ([0] black, [1] white, spaceMoves[0][spaceID], etc.)
+// black can only move up ( - ), white down ( + )  .. exception: kings
 
 function gatherSpaceMovements() {
     let checkerBoxes = document.querySelectorAll('.whiteSpace');
@@ -95,7 +96,7 @@ function gatherSpaceMovements() {
 gatherSpaceMovements();
 
 
-// Gather available and taken positions to an array
+// Gather both available && taken positions to an array
 
 function boardPositions(type = 'all') {
     // Grab all white spaces on the board
@@ -125,8 +126,6 @@ boardPositions();
 // Check open moves for a specific piece on the board & highlight
 
 function checkOpenMoves(spaceID) {
-    //let spaceID = parseInt(event.target.parentElement.id);
-
     let currentSpace = document.getElementById(spaceID);
 
     // Remove any highlighted open spaces & attribute data that is not in use anymore
@@ -144,6 +143,7 @@ function checkOpenMoves(spaceID) {
         if (isKing == false) {
             toggleOpenMoves(spaceID, playerTurn, false)
         } else {
+            // King must be checked both up and down the board
             toggleOpenMoves(spaceID, 0, false, true);
             toggleOpenMoves(spaceID, 1, false, true);
         }
@@ -176,10 +176,12 @@ function toggleOpenMoves(spaceID, playerID, counter = false, isKing = false, kin
                         // Set attributes to pass along data vs. numerous event listeners
                         let leftSpace = document.getElementById(nextTry[0]);
                         leftSpace.classList.add('open');
+                        // Origin space ID to later take away the piece on this space
                         leftSpace.dataset.id = spaceID;
+                        // data-takeid space ID of the opponent's piece to toggle/remove
                         leftSpace.dataset.takeid = e;
                     } else {
-                        countMoves.push(e);
+                        countMoves.push(e); // anonymous function use to count all moves available
                     }
                 } else if (originalRight === e && availPositions.includes(nextTry[1])) {
                     if (counter == false) {
@@ -201,6 +203,8 @@ function toggleOpenMoves(spaceID, playerID, counter = false, isKing = false, kin
             }
         }
     });
+
+    // Return # of available moves when function called during checkForWinner()
 
     return countMoves;
 }
@@ -238,6 +242,10 @@ function toggleMove(prev, next, take) {
     }
 }
 
+
+// Checking for winner in 2 cases, one: one player has taken all of the other player's pieces
+// and two: if there are absolutely no more moves for the players
+
 function checkForWinner() {
     let b_counter = 0;
     let w_counter = 0;
@@ -274,15 +282,28 @@ function checkForWinner() {
 
     if (takenPositions[0].length <= 0 || takenPositions[1].legnth <= 0 || b_counter === 0 || w_counter === 0) {
         let winner = takenPositions[0].length > takenPositions[1].length ? 'black' : 'white';
+
+        // DOM manipulation of 'player turn' in footer of game board
+        // without calling nextPlayer() so as not to run another loop
+        const playerTurnFooter = document.getElementById('player-turn');
+        score[playerTurn]++;
+
+        playerTurnFooter.classList.remove(playerTurn ? 'black' : 'white');
+        playerTurnFooter.classList.add(player[playerTurn]);
+
+        const playerScores = document.getElementById(`${winner}-score`);
+        playerScores.textContent = score[playerTurn];
+
         alert(`WINNER IS ${winner}`);
+        playerTurn = winner === 'black' ? 0 : 1;
         clearBoard();
     }
 }
 
 
-function playGame() {    
-    // This is the function executed around the entire gameArea using an even listener
+// Function used for event delegation using the game board container
 
+function playGame() {    
     let clickedSpace = event.target.classList;
 
     if (clickedSpace.contains(player[playerTurn])) {
@@ -290,11 +311,11 @@ function playGame() {
         checkOpenMoves(event.target.parentElement.id);
     } else if (clickedSpace.contains('open')) {
         // Toggle the clicked open spot and move the piece/take any opponent pieces
-        originalSpace = event.target.dataset.id;
 
+        originalSpace = event.target.dataset.id;
         toggleMove(originalSpace, event.target.id, event.target.dataset.takeid);
         playerTurn = playerTurn === 1 ? 0 : 1;
-        nextPlayer(playerTurn);
+        nextPlayer();
     } else if (clickedSpace.contains('king')) {
         checkOpenMoves(event.target.parentElement.id);
     }
@@ -302,7 +323,8 @@ function playGame() {
     checkForWinner();
 }
 
-function nextPlayer(turn) {
+
+function nextPlayer() {
     boardPositions();
 
     availPositions.forEach((e) => {
@@ -310,6 +332,7 @@ function nextPlayer(turn) {
         availDiv.classList.remove('open');
     });
 
+    // DOM manipulation of 'player turn' in footer of game board
     const playerTurnFooter = document.getElementById('player-turn');
     playerTurnFooter.classList.remove(playerTurn ? 'black' : 'white');
     playerTurnFooter.classList.add(player[playerTurn]);
