@@ -43,7 +43,7 @@ function clearBoard() {
     }
 }
 
-//clearBoard();
+clearBoard();
 
 // Assemble each space movement according to the board & direction
 // return spaceMoves array ([0] black, [1] white, spaceMoves[0][spaceID], etc.)
