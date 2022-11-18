@@ -146,9 +146,9 @@ function checkOpenMoves(spaceID) {
     }
 }
 
-function toggleOpenMoves(spaceID, playerID, counter = false, isKing = false) {
+function toggleOpenMoves(spaceID, playerID, counter = false, isKing = false, kingColor) {
     let countMoves = [];
-    let originalColor = document.getElementById(spaceID).dataset.taken;
+    let originalColor = kingColor ? kingColor : document.getElementById(spaceID).dataset.taken;
 
     spaceMoves[playerID][spaceID].forEach((e) => {
         if (e) {
@@ -233,16 +233,36 @@ function toggleMove(prev, next, take) {
 function checkForWinner() {
     let b_counter = 0;
     let w_counter = 0;
+    const w_kings = [];
+    const b_kings = [];
     
     takenPositions[0].forEach((s) => {
-        if (toggleOpenMoves(s, 0, true).length > 0) b_counter++;
+        let thisDiv = document.getElementById(s);
+        if (thisDiv.firstChild.classList.contains('king')) {
+            b_kings.push(s);
+        } else {
+            if (toggleOpenMoves(s, 0, true).length > 0) b_counter++;
+        }
     });
 
-    takenPositions[1].forEach((s) => {
-        if (toggleOpenMoves(s, 1, true).length > 0) w_counter++;
+    b_kings.forEach((k) => {
+        if (toggleOpenMoves(k, 0, true, true, 'black')) b_counter++;
     });
-console.log(b_counter+' '+w_counter)
-    if (b_counter === 0 || w_counter === 0) {
+    
+    takenPositions[1].forEach((s) => {
+        let thisDiv = document.getElementById(s);
+        if (thisDiv.firstChild.classList.contains('king')) {
+            w_kings.push(s);
+        } else {
+            if (toggleOpenMoves(s, 1, true).length > 0) w_counter++;
+        }
+    });
+
+    w_kings.forEach((k) => {
+        if (toggleOpenMoves(k, 1, true, true, 'white')) w_counter++;
+    });    
+
+    if (takenPositions[0].length <= 0 || takenPositions[1].legnth <= 0 || b_counter === 0 || w_counter === 0) {
         let winner = takenPositions[0].length > takenPositions[1].length ? 'black' : 'white';
         alert(`WINNER IS ${winner}`)
     }
