@@ -47,7 +47,7 @@ function clearBoard() {
     }
 }
 
-clearBoard();
+//clearBoard();
 
 // Assemble each space movement according to the board & direction visually
 // return spaceMoves: array ([0] black, [1] white, spaceMoves[0][spaceID], etc.)
@@ -289,7 +289,6 @@ function checkForWinner() {
         const playerTurnFooter = document.getElementById('player-turn');
         playerTurn = winner === 'black' ? 0 : 1;
         score[playerTurn]++;
-        console.log(playerTurn+' '+score)
 
         playerTurnFooter.classList.remove(playerTurnFooter.classList[1]);
         playerTurnFooter.classList.add(winner);
