@@ -247,6 +247,8 @@ function toggleMove(prev, next, take) {
 // and two: if there are absolutely no more moves for the players
 
 function checkForWinner() {
+    boardPositions();
+
     let b_counter = 0;
     let w_counter = 0;
     const w_kings = [];
@@ -285,12 +287,16 @@ function checkForWinner() {
         // without calling nextPlayer() so as not to run another loop
         let winner = takenPositions[0].length > takenPositions[1].length ? 'black' : 'white';
         const playerTurnFooter = document.getElementById('player-turn');
+        playerTurn = winner === 'black' ? 0 : 1;
         score[playerTurn]++;
+        console.log(playerTurn+' '+score)
 
         playerTurnFooter.classList.remove(playerTurnFooter.classList[1]);
         playerTurnFooter.classList.add(winner);
         const playerScores = document.getElementById(`${winner}-score`);
         playerScores.textContent = score[playerTurn];
+        
+        clearBoard();
 
         // Winner modal
         const winnerModal = document.getElementById('winner-modal');
@@ -302,10 +308,6 @@ function checkForWinner() {
         span.onclick = function() {
             winnerModal.style.display = 'none';
         }
-  
-        //alert(`WINNER IS ${winner}`);
-        playerTurn = winner === 'black' ? 0 : 1;
-        clearBoard();
     }
 }
 
