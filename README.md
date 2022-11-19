@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://t-hoffman.github.io/Project_1_Checkers/" alt="Play Game"><img src="https://user-images.githubusercontent.com/116391297/202815749-055a397d-e302-4397-b0b5-5423f05b3517.png" width="80%" /></a>
+  <a href="https://t-hoffman.github.io/Project_1_Checkers/" alt="Play Game"><img src="https://user-images.githubusercontent.com/116391297/202834078-23c7a943-740f-40d1-aba9-6425bcc67d85.png" width="80%" /></a>
 </p>
 
 <h1 align="center"> 🟥 ⬛️ CHECKERS ⬛️ 🟥 </h1>
