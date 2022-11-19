@@ -55,10 +55,6 @@ Once a player has won the winner is displayed on the screen using a modal.
 
 > https://t-hoffman.github.io/Project_1_Checkers/
 
-Test board with black almost winning:
-
-> https://t-hoffman.github.io/Project_1_Checkers/testboard.html
-
 Pending updated version to make multiple jumps.
 
 #### Files
