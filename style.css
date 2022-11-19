@@ -35,10 +35,12 @@ body {
     padding: 5px;
     display: flex;
     justify-content: center;
-    text-shadow: 2px 3px 0px rgb(250, 211, 211);
+    text-shadow: 3px 3px 0px rgb(250, 211, 211);
     font-family: 'Titan One', sans-serif;
     font-size: 68pt;
     color: #db5858;
+    -webkit-text-stroke-width: 2px;
+    -webkit-text-stroke-color: #c74848;
     background-color: #ffffff;
     border-radius: 10px;
     /* margin-bottom: 15px; */
@@ -73,6 +75,8 @@ body {
     height: 50px;
     font-family: 'Titan One', sans-serif;
     font-size: 14pt;
+    box-shadow: inset 1px 1px 0px 1px rgb(79, 165, 250);
+    border: 2px solid dodgerblue;
 }
 
 .scores {
@@ -107,6 +111,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 5px;
 }
 
 .blackSpace {
@@ -116,6 +121,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 5px;
 }
 
 .open {
@@ -125,29 +131,46 @@ body {
 
 .checker.black {
     /*background-color: dodgerblue;*/
-    background-color: black;
+    background-color: rgb(55, 55, 55);
+    border: 1px solid rgb(55, 55, 55);
     width: 40px;
     height: 40px;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 2px 2px 0px rgb(188, 188, 188);
+}
+
+.checker.black:hover {
+    box-shadow: inset 1px 1px 0px 1px rgb(105, 105, 105);
+}
+
+.checker.black:active {
+    background-color: rgb(226, 226, 226);
+    border: none;
 }
 
 .checker.white {
     /*background-color: #ffa0c4;*/
     background-color: white;
-    border: 1px solid grey;
+    border: 2px solid rgb(239, 239, 239);
     width: 40px;
     height: 40px;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 2px 2px 0px rgb(188, 188, 188);
+}
+
+.checker.white:hover {
+    box-shadow: inset 1px 1px 0px 1px rgb(249, 249, 249);
+}
+
+.checker.white:active {
+    background-color: rgb(239, 239, 239);
+    border: none;
 }
 
 .checker.king {
     border: 3px solid gold;
-}
-
-.border {
-    border: 5px solid #ff00a2;
 }
 
 /* The Modal (background) - from https://www.w3schools.com/howto/howto_css_modals.asp */
