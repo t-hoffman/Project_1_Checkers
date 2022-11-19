@@ -10,15 +10,15 @@
 </head>
 <body>
     <div class="main-container">
-        <!-- <div class="game-board-container"> -->
+        <div class="game-board-container">
             <div class="header">CHECKERS</div>
             <div class="game-container"></div>
             <div class="footer-container">
                 <div class="footer">
-                    <div style="width: 50px">
-                        <div class="checker black" id="player-turn" style="margin-right: 25px"></div>
+                    <div class="player-checker">
+                        <div class="checker black" id="player-turn"></div>
                     </div>
-                    <div style="margin-left: 5px">
+                    <div>
                         Player
                     </div>
                 </div>
@@ -29,11 +29,11 @@
             </div>
             <div id="winner-modal" class="modal">
                 <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <p class="modal-text"></p>
+                    <div class="modal-text"></div>
+                    <span class="close">&#10004; &#10004; &#10004;</span>
                 </div>
             </div>
-        <!-- </div> -->
+        </div>
     </div>
 
 </body>

@@ -303,7 +303,7 @@ function checkForWinner() {
         const span = document.getElementsByClassName('close')[0];
         winnerModal.style.display = 'block';
         modalContent.textContent = `WINNER IS ${winner.toUpperCase()}`;
-        if (winner === 'black') {document.querySelector('.modal-content').classList.add('black');}
+
         // When the user clicks on <span> (x), close the modal
         span.onclick = function() {
             winnerModal.style.display = 'none';
