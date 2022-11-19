@@ -51,13 +51,15 @@ Once a player has won the winner is displayed on the screen using a modal.
 
 5. The game is won when one player overtakes all of their opponents pieces.
 
-## Where to play
+## Where to play, misc.
 
 > https://t-hoffman.github.io/Project_1_Checkers/
 
 Test board with black almost winning:
 
 > https://t-hoffman.github.io/Project_1_Checkers/testboard.html
+
+Pending updated version to make multiple jumps.
 
 #### Files
 

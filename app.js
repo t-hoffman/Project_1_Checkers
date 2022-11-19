@@ -327,8 +327,6 @@ function playGame() {
         toggleMove(originalSpace, event.target.id, event.target.dataset.takeid);
         playerTurn = playerTurn === 1 ? 0 : 1;
         nextPlayer();
-    } else if (clickedSpace.contains('king')) {
-        checkOpenMoves(event.target.parentElement.id);
     }
 
     checkForWinner();
